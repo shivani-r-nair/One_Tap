@@ -2,20 +2,18 @@ public class Main {
 
     public static void main(String[] args) {
 
-        User user = new User(
-            0,
-            "Test User",
-            "test2@example.com",
-            "9876543211",
-            1
+        LoginDAO loginDAO = new LoginDAO();
+
+        User user = loginDAO.login(
+            "test@example.com",
+            "9999999999"
         );
 
-        UserDAO userDAO = new UserDAO();
-
-        if (userDAO.addUser(user)) {
-            System.out.println("User added successfully!");
+        if (user != null) {
+            System.out.println("Login successful!");
+            System.out.println("Welcome, " + user.getFullName());
         } else {
-            System.out.println("Failed to add user.");
+            System.out.println("Login failed!");
         }
     }
 }
