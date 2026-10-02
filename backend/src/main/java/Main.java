@@ -1,28 +1,21 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-
 public class Main {
 
     public static void main(String[] args) {
 
-        String url = "jdbc:mysql://localhost:3306/one_tap";
-        String username = "root";
-        String password = "2244@shivani38579";
+        User user = new User(
+            0,
+            "Test User",
+            "test2@example.com",
+            "9876543210",
+            1
+        );
 
-        try {
-            Connection connection = DriverManager.getConnection(
-                url,
-                username,
-                password
-            );
+        UserDAO userDAO = new UserDAO();
 
-            System.out.println("Connected to MySQL successfully!");
-
-            connection.close();
-
-        } catch (Exception e) {
-            System.out.println("Connection failed!");
-            e.printStackTrace();
+        if (userDAO.addUser(user)) {
+            System.out.println("User added successfully!");
+        } else {
+            System.out.println("Failed to add user.");
         }
     }
 }
