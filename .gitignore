@@ -1,1 +1,9 @@
+# Java compiled files
 *.class
+
+# Environment / password files
+.env
+
+# IDE files
+.vscode/
+.idea/

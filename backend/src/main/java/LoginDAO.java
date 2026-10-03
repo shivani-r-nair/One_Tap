@@ -6,7 +6,8 @@ public class LoginDAO {
 
     public User login(String email, String phoneNumber) {
 
-        String sql = "SELECT user_id, full_name, email, phone_number, country_id " +
+        String sql = "SELECT user_id, full_name, email, phone_number, " +
+                     "country_id, state_id, address, latitude, longitude " +
                      "FROM users WHERE email = ? AND phone_number = ?";
 
         try {
@@ -26,7 +27,11 @@ public class LoginDAO {
                     result.getString("full_name"),
                     result.getString("email"),
                     result.getString("phone_number"),
-                    result.getInt("country_id")
+                    result.getInt("country_id"),
+                    result.getInt("state_id"),
+                    result.getString("address"),
+                    result.getDouble("latitude"),
+                    result.getDouble("longitude")
                 );
 
                 result.close();
