@@ -1,6 +1,8 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
+import java.util.ArrayList;
 
 public class TrustedContactDAO {
 
@@ -13,7 +15,8 @@ public class TrustedContactDAO {
         try {
             Connection connection = DatabaseConnection.getConnection();
 
-            PreparedStatement statement = connection.prepareStatement(sql);
+            PreparedStatement statement =
+                    connection.prepareStatement(sql);
 
             statement.setInt(1, contact.getUserId());
             statement.setString(2, contact.getContactName());
@@ -34,15 +37,17 @@ public class TrustedContactDAO {
         }
     }
 
-
     public int getTrustedContactCount(int userId) {
 
-        String sql = "SELECT COUNT(*) FROM trusted_contacts WHERE user_id = ?";
+        String sql =
+                "SELECT COUNT(*) FROM trusted_contacts WHERE user_id = ?";
 
         try {
-            Connection connection = DatabaseConnection.getConnection();
+            Connection connection =
+                    DatabaseConnection.getConnection();
 
-            PreparedStatement statement = connection.prepareStatement(sql);
+            PreparedStatement statement =
+                    connection.prepareStatement(sql);
 
             statement.setInt(1, userId);
 
@@ -69,5 +74,49 @@ public class TrustedContactDAO {
         }
 
         return 0;
+    }
+
+    public List<TrustedContact> getTrustedContacts(int userId) {
+
+        List<TrustedContact> contacts = new ArrayList<>();
+
+        String sql =
+                "SELECT contact_id, user_id, contact_name, " +
+                "phone_number, relationship " +
+                "FROM trusted_contacts WHERE user_id = ?";
+
+        try {
+            Connection connection =
+                    DatabaseConnection.getConnection();
+
+            PreparedStatement statement =
+                    connection.prepareStatement(sql);
+
+            statement.setInt(1, userId);
+
+            ResultSet result = statement.executeQuery();
+
+            while (result.next()) {
+
+                TrustedContact contact = new TrustedContact(
+                        result.getInt("user_id"),
+                        result.getString("contact_name"),
+                        result.getString("phone_number"),
+                        result.getString("relationship")
+                );
+
+                contacts.add(contact);
+            }
+
+            result.close();
+            statement.close();
+            connection.close();
+
+        } catch (Exception e) {
+            System.out.println("Error getting trusted contacts!");
+            e.printStackTrace();
+        }
+
+        return contacts;
     }
 }

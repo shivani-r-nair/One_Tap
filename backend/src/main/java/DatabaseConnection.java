@@ -9,7 +9,15 @@ public class DatabaseConnection {
 
     public static Connection getConnection() {
         try {
-            return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            return DriverManager.getConnection(
+                    URL,
+                    USERNAME,
+                    PASSWORD
+            );
+
         } catch (Exception e) {
             System.out.println("Database connection failed!");
             e.printStackTrace();
