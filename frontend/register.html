@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Register | One Tap</title>
+
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+
+<body>
+
+    <!-- ================================
+         Header
+    ================================= -->
+
+    <header>
+
+        <h1>One Tap</h1>
+
+        <p>
+            Your safety, one tap away.
+        </p>
+
+    </header>
+
+
+    <!-- ================================
+         Main Registration Area
+    ================================= -->
+
+    <main>
+
+        <section>
+
+            <h2>Create Account</h2>
+
+            <p>
+                Join One Tap and take a step toward safer living.
+            </p>
+
+
+            <!-- ================================
+                 Registration Form
+            ================================= -->
+
+            <form id="registerForm">
+
+
+                <!-- Full Name -->
+
+                <label for="fullName">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    placeholder="Enter your full name"
+                    required
+                >
+
+
+                <!-- Email -->
+
+                <label for="email">
+                    Email Address
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                >
+
+
+                <!-- Phone Number -->
+
+                <label for="phoneNumber">
+                    Phone Number
+                </label>
+
+                <input
+                    type="tel"
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    placeholder="Enter your phone number"
+                    required
+                >
+
+
+                <!-- Country -->
+
+                <label for="countryId">
+                    Country
+                </label>
+
+                <select
+                    id="countryId"
+                    name="countryId"
+                    required
+                >
+
+                    <option value="">
+                        Select your country
+                    </option>
+
+                    <option value="1">
+                        India
+                    </option>
+
+                </select>
+
+
+                <!-- State / Union Territory -->
+
+                <label for="stateId">
+                    State / Union Territory
+                </label>
+
+                <select
+                    id="stateId"
+                    name="stateId"
+                    required
+                >
+
+                    <option value="">
+                        Select your state or UT
+                    </option>
+
+
+                    <!-- ================================
+                         STATES
+                    ================================= -->
+
+                    <option value="1">
+                        Andhra Pradesh
+                    </option>
+
+                    <option value="2">
+                        Arunachal Pradesh
+                    </option>
+
+                    <option value="3">
+                        Assam
+                    </option>
+
+                    <option value="4">
+                        Bihar
+                    </option>
+
+                    <option value="5">
+                        Chhattisgarh
+                    </option>
+
+                    <option value="6">
+                        Goa
+                    </option>
+
+                    <option value="7">
+                        Gujarat
+                    </option>
+
+                    <option value="8">
+                        Haryana
+                    </option>
+
+                    <option value="9">
+                        Himachal Pradesh
+                    </option>
+
+                    <option value="10">
+                        Jharkhand
+                    </option>
+
+                    <option value="11">
+                        Karnataka
+                    </option>
+
+                    <option value="12">
+                        Kerala
+                    </option>
+
+                    <option value="13">
+                        Madhya Pradesh
+                    </option>
+
+                    <option value="14">
+                        Maharashtra
+                    </option>
+
+                    <option value="15">
+                        Manipur
+                    </option>
+
+                    <option value="16">
+                        Meghalaya
+                    </option>
+
+                    <option value="17">
+                        Mizoram
+                    </option>
+
+                    <option value="18">
+                        Nagaland
+                    </option>
+
+                    <option value="19">
+                        Odisha
+                    </option>
+
+                    <option value="20">
+                        Punjab
+                    </option>
+
+                    <option value="21">
+                        Rajasthan
+                    </option>
+
+                    <option value="22">
+                        Sikkim
+                    </option>
+
+                    <option value="23">
+                        Tamil Nadu
+                    </option>
+
+                    <option value="24">
+                        Telangana
+                    </option>
+
+                    <option value="25">
+                        Tripura
+                    </option>
+
+                    <option value="26">
+                        Uttar Pradesh
+                    </option>
+
+                    <option value="27">
+                        Uttarakhand
+                    </option>
+
+                    <option value="28">
+                        West Bengal
+                    </option>
+
+
+                    <!-- ================================
+                         UNION TERRITORIES
+                    ================================= -->
+
+                    <option value="29">
+                        Andaman and Nicobar Islands
+                    </option>
+
+                    <option value="30">
+                        Chandigarh
+                    </option>
+
+                    <option value="31">
+                        Dadra and Nagar Haveli and Daman and Diu
+                    </option>
+
+                    <option value="32">
+                        Delhi
+                    </option>
+
+                    <option value="33">
+                        Jammu and Kashmir
+                    </option>
+
+                    <option value="34">
+                        Ladakh
+                    </option>
+
+                    <option value="35">
+                        Lakshadweep
+                    </option>
+
+                    <option value="36">
+                        Puducherry
+                    </option>
+
+                </select>
+
+
+                <!-- Address -->
+
+                <label for="address">
+                    Address
+                </label>
+
+                <input
+                    type="text"
+                    id="address"
+                    name="address"
+                    placeholder="Enter your address"
+                    required
+                >
+
+
+                <!-- ================================
+                     Location
+                ================================= -->
+
+                <div class="location-section">
+
+                    <p class="location-title">
+                        Location
+                    </p>
+
+
+                    <button
+                        type="button"
+                        id="getLocationButton"
+                    >
+                        📍 Detect My Location
+                    </button>
+
+
+                    <p id="locationStatus">
+                        Location not detected yet.
+                    </p>
+
+
+                    <!-- Display Coordinates -->
+
+                    <div
+                        id="coordinates"
+                        class="coordinates"
+                    >
+
+                        <p>
+                            <strong>Latitude:</strong>
+
+                            <span id="displayLatitude">
+                                --
+                            </span>
+                        </p>
+
+
+                        <p>
+                            <strong>Longitude:</strong>
+
+                            <span id="displayLongitude">
+                                --
+                            </span>
+                        </p>
+
+                    </div>
+
+
+                    <!-- Hidden values sent to backend -->
+
+                    <input
+                        type="hidden"
+                        id="latitude"
+                        name="latitude"
+                    >
+
+                    <input
+                        type="hidden"
+                        id="longitude"
+                        name="longitude"
+                    >
+
+                </div>
+
+
+                <!-- Register Button -->
+
+                <button
+                    type="submit"
+                >
+                    Register
+                </button>
+
+            </form>
+
+
+            <!-- Login -->
+
+            <p>
+                Already have an account?
+
+                <a href="login.html">
+                    Login
+                </a>
+            </p>
+
+
+            <!-- Home -->
+
+            <p>
+
+                <a href="index.html">
+                    Back to Home
+                </a>
+
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================================
+         Footer
+    ================================= -->
+
+    <footer>
+
+        <p>
+            &copy; 2026 One Tap.
+            Your safety matters.
+        </p>
+
+    </footer>
+
+
+    <!-- JavaScript -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,212 @@
+```css
+/* Basic page setup */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #1e293b;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+header {
+    background: #123b66;
+    color: white;
+    padding: 24px 8%;
+}
+
+header h1 {
+    font-size: 32px;
+    margin-bottom: 6px;
+}
+
+header p {
+    color: #dbeafe;
+}
+
+/* Main content */
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+section {
+    background: white;
+    max-width: 600px;
+    width: 100%;
+    padding: 48px 32px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+}
+
+section h2 {
+    font-size: 30px;
+    margin-bottom: 16px;
+    color: #123b66;
+}
+
+section p {
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 12px;
+    color: #64748b;
+}
+
+/* Buttons */
+button {
+    padding: 13px 28px;
+    margin: 18px 6px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+button:first-of-type {
+    background: #1769aa;
+    color: white;
+}
+
+button:first-of-type:hover {
+    background: #0f4f85;
+}
+
+button:last-of-type {
+    background: #e2eaf4;
+    color: #123b66;
+}
+
+button:last-of-type:hover {
+    background: #cbd9e9;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* Small screens */
+@media (max-width: 480px) {
+    header {
+        padding: 22px;
+    }
+
+    section {
+        padding: 36px 20px;
+    }
+
+    section h2 {
+        font-size: 25px;
+    }
+}
+```
+
+/* Form styling */
+
+form {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-top: 24px;
+    width: 100%;
+}
+
+form label {
+    display: block;
+    width: 100%;
+    margin: 12px 0 8px;
+    font-weight: bold;
+    color: #334155;
+}
+
+form input,
+form select {
+    display: block;
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 16px;
+    background: white;
+    color: #334155;
+}
+
+form input:focus,
+form select:focus {
+    outline: 2px solid #1769aa;
+    border-color: transparent;
+}
+
+form button {
+    margin: 24px 0 16px;
+}
+
+a {
+    color: #1769aa;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+.location-section {
+    margin-top: 12px;
+    text-align: left;
+}
+
+.location-title {
+    font-weight: bold;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+#getLocationButton {
+    width: 100%;
+    margin: 8px 0;
+    background: #1769aa;
+    color: white;
+}
+
+#getLocationButton:hover {
+    background: #0f4f85;
+}
+
+#getLocationButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+#locationStatus {
+    font-size: 14px;
+    color: #64748b;
+    margin-top: 8px;
+}
+.coordinates {
+    margin-top: 15px;
+    padding: 12px;
+    background: #f4f7fb;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.coordinates p {
+    margin: 5px 0;
+    color: #334155;
+    font-size: 14px;
+}
