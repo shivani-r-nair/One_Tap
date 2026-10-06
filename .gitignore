@@ -7,3 +7,9 @@
 # IDE files
 .vscode/
 .idea/
+
+# Java/Maven build files
+target/
+
+# Local Twilio classpath
+backend/twilio-classpath.txt

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0a0a0f" stop-opacity="1"/>
+    </radialGradient>
+    <linearGradient id="btnGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff3b53"/>
+      <stop offset="50%" stop-color="#dc2626"/>
+      <stop offset="100%" stop-color="#7f1d1d"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="#070709"/>
+  <circle cx="256" cy="256" r="220" fill="url(#bgGlow)"/>
+  <circle cx="256" cy="256" r="180" fill="url(#btnGrad)" stroke="#ff4d64" stroke-width="8"/>
+  <text x="256" y="285" font-family="system-ui, -apple-system, sans-serif" font-size="120" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="4">SOS</text>
+  <text x="256" y="340" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="800" fill="#fecaca" text-anchor="middle" letter-spacing="3">ONE TAP</text>
+</svg>

@@ -40,16 +40,26 @@ public class TrustedContactServlet extends HttpServlet {
         boolean success =
                 contactDAO.addTrustedContact(contact);
 
-        response.setContentType("text/plain");
+        String format = request.getParameter("format");
+        String acceptHeader = request.getHeader("Accept");
+        boolean wantJson = "json".equalsIgnoreCase(format) ||
+                (acceptHeader != null && acceptHeader.contains("application/json"));
 
-        if (success) {
-            response.getWriter().println(
-                    "Trusted contact added successfully!"
-            );
+        if (wantJson) {
+            response.setContentType("application/json");
+            if (success) {
+                response.getWriter().println("{\"status\":\"success\",\"message\":\"Trusted contact added successfully!\"}");
+            } else {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().println("{\"status\":\"error\",\"message\":\"Failed to add trusted contact.\"}");
+            }
         } else {
-            response.getWriter().println(
-                    "Failed to add trusted contact."
-            );
+            response.setContentType("text/plain");
+            if (success) {
+                response.getWriter().println("Trusted contact added successfully!");
+            } else {
+                response.getWriter().println("Failed to add trusted contact.");
+            }
         }
     }
 }

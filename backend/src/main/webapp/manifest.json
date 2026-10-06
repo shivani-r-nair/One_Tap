@@ -1,0 +1,22 @@
+{
+  "name": "One Tap - Emergency SOS",
+  "short_name": "OneTap SOS",
+  "description": "Instant One-Tap Emergency Assistance & SOS System",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0a0d",
+  "theme_color": "#dc2626",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

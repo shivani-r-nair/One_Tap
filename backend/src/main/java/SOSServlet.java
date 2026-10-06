@@ -60,12 +60,19 @@ public class SOSServlet extends HttpServlet {
         boolean alertCreated =
                 alertDAO.createAlert(alert);
 
+        String format = request.getParameter("format");
+        String acceptHeader = request.getHeader("Accept");
+        boolean wantJson = "json".equalsIgnoreCase(format) ||
+                (acceptHeader != null && acceptHeader.contains("application/json"));
+
         if (!alertCreated) {
-
-            response.getWriter().println(
-                    "Failed to create SOS alert."
-            );
-
+            if (wantJson) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.setContentType("application/json");
+                response.getWriter().println("{\"status\":\"error\",\"message\":\"Failed to create SOS alert.\"}");
+            } else {
+                response.getWriter().println("Failed to create SOS alert.");
+            }
             return;
         }
 
@@ -76,44 +83,81 @@ public class SOSServlet extends HttpServlet {
         List<TrustedContact> contacts =
                 contactDAO.getTrustedContacts(userId);
 
-        response.getWriter().println(
-                "SOS alert created successfully!"
-        );
-
-        response.getWriter().println(
-                "Trusted contacts to alert: " +
-                contacts.size()
-        );
-
-        // Call every trusted contact
-        for (TrustedContact contact : contacts) {
+        if (wantJson) {
+            response.setContentType("application/json");
+            StringBuilder callsJson = new StringBuilder("[");
+            for (int i = 0; i < contacts.size(); i++) {
+                TrustedContact contact = contacts.get(i);
+                boolean callSent = false;
+                try {
+                    TwilioCallService.makeCall(contact.getPhoneNumber());
+                    callSent = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                callsJson.append("{")
+                    .append("\"contactName\":\"").append(escapeJson(contact.getContactName())).append("\",")
+                    .append("\"phoneNumber\":\"").append(escapeJson(contact.getPhoneNumber())).append("\",")
+                    .append("\"callSent\":").append(callSent)
+                    .append("}");
+                if (i < contacts.size() - 1) callsJson.append(",");
+            }
+            callsJson.append("]");
 
             response.getWriter().println(
-                    "Calling: " +
-                    contact.getContactName() +
-                    " - " +
-                    contact.getPhoneNumber()
+                "{\"status\":\"success\"," +
+                "\"message\":\"SOS alert created successfully!\"," +
+                "\"userId\":" + userId + "," +
+                "\"latitude\":" + latitude + "," +
+                "\"longitude\":" + longitude + "," +
+                "\"contactsAlerted\":" + contacts.size() + "," +
+                "\"calls\":" + callsJson.toString() + "}"
+            );
+        } else {
+            response.getWriter().println(
+                    "SOS alert created successfully!"
             );
 
-            try {
+            response.getWriter().println(
+                    "Trusted contacts to alert: " +
+                    contacts.size()
+            );
 
-                TwilioCallService.makeCall(
+            // Call every trusted contact
+            for (TrustedContact contact : contacts) {
+
+                response.getWriter().println(
+                        "Calling: " +
+                        contact.getContactName() +
+                        " - " +
                         contact.getPhoneNumber()
                 );
 
-                response.getWriter().println(
-                        "Call request sent successfully."
-                );
+                try {
 
-            } catch (Exception e) {
+                    TwilioCallService.makeCall(
+                            contact.getPhoneNumber()
+                    );
 
-                response.getWriter().println(
-                        "Failed to call " +
-                        contact.getContactName()
-                );
+                    response.getWriter().println(
+                            "Call request sent successfully."
+                    );
 
-                e.printStackTrace();
+                } catch (Exception e) {
+
+                    response.getWriter().println(
+                            "Failed to call " +
+                            contact.getContactName()
+                    );
+
+                    e.printStackTrace();
+                }
             }
         }
+    }
+
+    private static String escapeJson(String s) {
+        if (s == null) return "";
+        return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r");
     }
 }

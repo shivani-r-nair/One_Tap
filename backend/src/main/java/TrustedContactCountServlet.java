@@ -34,23 +34,37 @@ public class TrustedContactCountServlet extends HttpServlet {
         int count =
                 contactDAO.getTrustedContactCount(userId);
 
-        response.getWriter().println(
-                "Trusted Contact Count: " + count
-        );
+        String format = request.getParameter("format");
+        String acceptHeader = request.getHeader("Accept");
+        boolean wantJson = "json".equalsIgnoreCase(format) ||
+                (acceptHeader != null && acceptHeader.contains("application/json"));
 
-        if (count >= 5) {
-
+        if (wantJson) {
+            response.setContentType("application/json");
             response.getWriter().println(
-                    "Minimum 5 trusted contacts requirement is satisfied."
+                "{\"status\":\"success\"," +
+                "\"userId\":" + userId + "," +
+                "\"count\":" + count + "," +
+                "\"required\":5," +
+                "\"satisfied\":" + (count >= 5) + "," +
+                "\"remaining\":" + Math.max(0, 5 - count) + "}"
             );
-
         } else {
-
             response.getWriter().println(
-                    "You need to add " +
-                    (5 - count) +
-                    " more trusted contact(s)."
+                    "Trusted Contact Count: " + count
             );
+
+            if (count >= 5) {
+                response.getWriter().println(
+                        "Minimum 5 trusted contacts requirement is satisfied."
+                );
+            } else {
+                response.getWriter().println(
+                        "You need to add " +
+                        (5 - count) +
+                        " more trusted contact(s)."
+                );
+            }
         }
     }
 }
