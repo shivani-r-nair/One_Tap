@@ -2,13 +2,13 @@ public class SOSAlert {
 
     private int alertId;
     private int userId;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
     private String status;
 
     public SOSAlert(int userId,
-                    double latitude,
-                    double longitude,
+                    Double latitude,
+                    Double longitude,
                     String status) {
 
         this.userId = userId;
@@ -25,11 +25,11 @@ public class SOSAlert {
         return userId;
     }
 
-    public double getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public double getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 

@@ -7,25 +7,22 @@ public class SOSAlertDAO {
 
         String sql =
                 "INSERT INTO sos_alerts " +
-                "(user_id, latitude, longitude, status) " +
-                "VALUES (?, ?, ?, ?)";
+                "(user_id, latitude, longitude, status, dispatch_status) " +
+                "VALUES (?, ?, ?, ?, 'PENDING')";
 
         try {
-            Connection connection =
-                    DatabaseConnection.getConnection();
-
-            PreparedStatement statement =
-                    connection.prepareStatement(sql);
+            Connection connection = DatabaseConnection.getConnection();
+            if (connection == null) return false;
+            PreparedStatement statement = connection.prepareStatement(sql);
 
             statement.setInt(1, alert.getUserId());
-            statement.setDouble(2, alert.getLatitude());
-            statement.setDouble(3, alert.getLongitude());
+            if (alert.getLatitude() == null) statement.setNull(2, java.sql.Types.DECIMAL); else statement.setDouble(2, alert.getLatitude());
+            if (alert.getLongitude() == null) statement.setNull(3, java.sql.Types.DECIMAL); else statement.setDouble(3, alert.getLongitude());
             statement.setString(4, alert.getStatus());
 
             statement.executeUpdate();
 
-            statement.close();
-            connection.close();
+            statement.close(); connection.close();
 
             return true;
 

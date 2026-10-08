@@ -1,78 +1,8 @@
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-import java.util.List;
-
-@WebServlet("/trusted-contacts")
-public class GetTrustedContactsServlet extends HttpServlet {
-
-    @Override
-    protected void doGet(HttpServletRequest request,
-                          HttpServletResponse response)
-            throws ServletException, IOException {
-
-        String userIdParameter =
-                request.getParameter("userId");
-
-        if (userIdParameter == null) {
-            response.setContentType("text/plain");
-            response.getWriter().println(
-                    "User ID is required."
-            );
-            return;
-        }
-
-        int userId = Integer.parseInt(userIdParameter);
-
-        TrustedContactDAO contactDAO =
-                new TrustedContactDAO();
-
-        List<TrustedContact> contacts =
-                contactDAO.getTrustedContacts(userId);
-
-        String format = request.getParameter("format");
-        String acceptHeader = request.getHeader("Accept");
-        boolean wantJson = "json".equalsIgnoreCase(format) ||
-                (acceptHeader != null && acceptHeader.contains("application/json"));
-
-        if (wantJson) {
-            response.setContentType("application/json");
-            StringBuilder sb = new StringBuilder("[");
-            for (int i = 0; i < contacts.size(); i++) {
-                TrustedContact c = contacts.get(i);
-                sb.append("{")
-                  .append("\"userId\":").append(c.getUserId()).append(",")
-                  .append("\"contactName\":\"").append(escapeJson(c.getContactName())).append("\",")
-                  .append("\"phoneNumber\":\"").append(escapeJson(c.getPhoneNumber())).append("\",")
-                  .append("\"relationship\":\"").append(escapeJson(c.getRelationship())).append("\"")
-                  .append("}");
-                if (i < contacts.size() - 1) sb.append(",");
-            }
-            sb.append("]");
-            response.getWriter().println(sb.toString());
-        } else {
-            response.setContentType("text/plain");
-            if (contacts.isEmpty()) {
-                response.getWriter().println("No trusted contacts found.");
-            } else {
-                response.getWriter().println("Trusted Contacts:");
-                for (TrustedContact contact : contacts) {
-                    response.getWriter().println(
-                            contact.getContactName() + " - " +
-                            contact.getPhoneNumber() + " - " +
-                            contact.getRelationship()
-                    );
-                }
-            }
-        }
-    }
-
-    private static String escapeJson(String s) {
-        if (s == null) return "";
-        return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r");
-    }
+import com.fasterxml.jackson.databind.*;import jakarta.servlet.*;import jakarta.servlet.annotation.WebServlet;import jakarta.servlet.http.*;import java.io.IOException;import java.sql.*;import java.util.*;
+@WebServlet("/trusted-contacts") public class GetTrustedContactsServlet extends HttpServlet {
+ private final ObjectMapper mapper=new ObjectMapper();
+ protected void doGet(HttpServletRequest q,HttpServletResponse p)throws ServletException,IOException{if(!Security.requireUser(q,p))return;try(Connection c=DatabaseConnection.getConnection();PreparedStatement s=c.prepareStatement("SELECT contact_id,contact_name,phone_number,relationship FROM trusted_contacts WHERE user_id=? ORDER BY contact_id")){s.setInt(1,Security.userId(q));try(ResultSet r=s.executeQuery()){List<Map<String,Object>> list=new ArrayList<>();while(r.next()){Map<String,Object> m=new LinkedHashMap<>();m.put("contactId",r.getInt(1));m.put("contactName",r.getString(2));m.put("phoneNumber",r.getString(3));m.put("relationship",r.getString(4));list.add(m);}Security.json(p,200,"{\"contacts\":"+mapper.writeValueAsString(list)+"}");}}catch(Exception e){Security.json(p,503,"{\"message\":\"Could not load contacts.\"}");}}
+ protected void doPost(HttpServletRequest q,HttpServletResponse p)throws ServletException,IOException{if(!Security.requireUser(q,p))return;try{JsonNode a=mapper.readTree(q.getParameter("contacts"));if(a==null||!a.isArray()||a.size()<3){Security.json(p,400,"{\"message\":\"At least three contacts are required.\"}");return;}for(JsonNode n:a){String name=n.path("contactName").asText().trim(),phone=n.path("phoneNumber").asText().trim(),rel=n.path("relationship").asText().trim();if(name.length()<2||name.length()>100||!phone.matches("\\+?[0-9 ()-]{8,20}")||rel.isEmpty()||rel.length()>100){Security.json(p,400,"{\"message\":\"Every contact needs a valid name, phone number, and relationship.\"}");return;}}
+ try(Connection c=DatabaseConnection.getConnection()){c.setAutoCommit(false);try(PreparedStatement d=c.prepareStatement("DELETE FROM trusted_contacts WHERE user_id=?")){d.setInt(1,Security.userId(q));d.executeUpdate();}try(PreparedStatement s=c.prepareStatement("INSERT INTO trusted_contacts(user_id,contact_name,phone_number,relationship) VALUES(?,?,?,?)")){for(JsonNode n:a){s.setInt(1,Security.userId(q));s.setString(2,n.path("contactName").asText().trim());s.setString(3,n.path("phoneNumber").asText().trim());s.setString(4,n.path("relationship").asText().trim());s.addBatch();}s.executeBatch();}c.commit();Security.json(p,200,"{\"status\":\"success\",\"message\":\"Contacts saved.\"}");}catch(Exception e){Security.json(p,503,"{\"message\":\"Contacts could not be saved.\"}");}}
+ catch(Exception e){Security.json(p,400,"{\"message\":\"Invalid contacts request.\"}");}}
 }

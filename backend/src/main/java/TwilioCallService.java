@@ -13,17 +13,13 @@ public class TwilioCallService {
     private static final String TWILIO_PHONE_NUMBER =
             System.getenv("TWILIO_PHONE_NUMBER");
 
-    public static void makeCall(String phoneNumber) {
+    public static String makeCall(String phoneNumber) {
 
         if (ACCOUNT_SID == null ||
             AUTH_TOKEN == null ||
             TWILIO_PHONE_NUMBER == null) {
 
-            System.out.println(
-                    "Twilio environment variables are missing."
-            );
-
-            return;
+            throw new IllegalStateException("Twilio is not configured.");
         }
 
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
@@ -34,9 +30,6 @@ public class TwilioCallService {
                 "https://webhooks.twilio.com/v1/Voice/Template/voice_text_to_speech"
         ).create();
 
-        System.out.println(
-                "Call started successfully. Call SID: " +
-                call.getSid()
-        );
+        return call.getStatus() == null ? "queued" : call.getStatus().toString();
     }
 }

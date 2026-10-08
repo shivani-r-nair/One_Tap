@@ -14,9 +14,9 @@ public class TrustedContactServlet extends HttpServlet {
                           HttpServletResponse response)
             throws ServletException, IOException {
 
-        int userId = Integer.parseInt(
-                request.getParameter("userId")
-        );
+        if (!Security.requireUser(request, response)) return;
+
+        int userId = Security.userId(request);
 
         String contactName =
                 request.getParameter("contactName");

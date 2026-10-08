@@ -64,6 +64,24 @@ public class LocationServlet extends HttpServlet {
             }
             json.append("],");
 
+            // District values come only from the maintained database table.
+            json.append("\"districts\":[");
+            String districtSql = "SELECT district_id, state_id, district_name FROM districts ORDER BY state_id, district_name";
+            try (PreparedStatement stmt = connection.prepareStatement(districtSql);
+                 ResultSet rs = stmt.executeQuery()) {
+                boolean first = true;
+                while (rs.next()) {
+                    if (!first) json.append(",");
+                    json.append("{")
+                        .append("\"districtId\":").append(rs.getInt("district_id")).append(",")
+                        .append("\"stateId\":").append(rs.getInt("state_id")).append(",")
+                        .append("\"districtName\":\"").append(escape(rs.getString("district_name"))).append("\"")
+                        .append("}");
+                    first = false;
+                }
+            }
+            json.append("],");
+
             // Fetch emergency contacts
             json.append("\"emergencyContacts\":[");
             String emergSql = "SELECT contact_id, country_id, service_name, emergency_number FROM emergency_contacts ORDER BY contact_id";
@@ -88,9 +106,9 @@ public class LocationServlet extends HttpServlet {
             response.getWriter().println(json.toString());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Location data request failed: " + e.getClass().getSimpleName());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().println("{\"status\":\"error\",\"message\":\"" + escape(e.getMessage()) + "\"}");
+            response.getWriter().println("{\"status\":\"error\",\"message\":\"Location lists are unavailable. Check the database migration and connection.\"}");
         }
     }
 
