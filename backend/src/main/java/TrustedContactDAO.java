@@ -3,6 +3,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.ArrayList;
+import java.sql.SQLException;
 
 public class TrustedContactDAO {
 
@@ -117,6 +118,22 @@ public class TrustedContactDAO {
             e.printStackTrace();
         }
 
+        return contacts;
+    }
+
+    public List<TrustedContact> getTrustedContactsStrict(int userId) throws SQLException {
+        List<TrustedContact> contacts = new ArrayList<>();
+        String sql = "SELECT contact_id,user_id,contact_name,phone_number,relationship FROM trusted_contacts WHERE user_id=? ORDER BY contact_id";
+        try (Connection c = DatabaseConnection.getConnection()) {
+            if (c == null) throw new SQLException("Database connection unavailable.");
+            try (PreparedStatement s = c.prepareStatement(sql)) {
+                s.setInt(1, userId);
+                try (ResultSet r = s.executeQuery()) {
+                    while (r.next()) contacts.add(new TrustedContact(r.getInt("contact_id"), r.getInt("user_id"),
+                            r.getString("contact_name"), r.getString("phone_number"), r.getString("relationship")));
+                }
+            }
+        }
         return contacts;
     }
 }

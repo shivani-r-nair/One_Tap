@@ -4,6 +4,7 @@ public class SOSAlert {
     private int userId;
     private Double latitude;
     private Double longitude;
+    private Double accuracy;
     private String status;
 
     public SOSAlert(int userId,
@@ -14,6 +15,15 @@ public class SOSAlert {
         this.userId = userId;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.accuracy = null;
+        this.status = status;
+    }
+
+    public SOSAlert(int userId, Double latitude, Double longitude, Double accuracy, String status) {
+        this.userId = userId;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.accuracy = accuracy;
         this.status = status;
     }
 
@@ -32,6 +42,8 @@ public class SOSAlert {
     public Double getLongitude() {
         return longitude;
     }
+
+    public Double getAccuracy() { return accuracy; }
 
     public String getStatus() {
         return status;

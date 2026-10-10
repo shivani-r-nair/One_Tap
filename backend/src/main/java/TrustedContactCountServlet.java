@@ -13,20 +13,8 @@ public class TrustedContactCountServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-
-        String userIdParameter =
-                request.getParameter("userId");
-
-        response.setContentType("text/plain");
-
-        if (userIdParameter == null) {
-            response.getWriter().println(
-                    "User ID is required."
-            );
-            return;
-        }
-
-        int userId = Integer.parseInt(userIdParameter);
+        if (!Security.requireUser(request, response)) return;
+        int userId = Security.userId(request);
 
         TrustedContactDAO contactDAO =
                 new TrustedContactDAO();
@@ -34,37 +22,9 @@ public class TrustedContactCountServlet extends HttpServlet {
         int count =
                 contactDAO.getTrustedContactCount(userId);
 
-        String format = request.getParameter("format");
-        String acceptHeader = request.getHeader("Accept");
-        boolean wantJson = "json".equalsIgnoreCase(format) ||
-                (acceptHeader != null && acceptHeader.contains("application/json"));
-
-        if (wantJson) {
-            response.setContentType("application/json");
-            response.getWriter().println(
-                "{\"status\":\"success\"," +
-                "\"userId\":" + userId + "," +
-                "\"count\":" + count + "," +
-                "\"required\":5," +
-                "\"satisfied\":" + (count >= 5) + "," +
-                "\"remaining\":" + Math.max(0, 5 - count) + "}"
-            );
-        } else {
-            response.getWriter().println(
-                    "Trusted Contact Count: " + count
-            );
-
-            if (count >= 5) {
-                response.getWriter().println(
-                        "Minimum 5 trusted contacts requirement is satisfied."
-                );
-            } else {
-                response.getWriter().println(
-                        "You need to add " +
-                        (5 - count) +
-                        " more trusted contact(s)."
-                );
-            }
-        }
+        Security.json(response, 200,
+                "{\"status\":\"success\",\"count\":" + count +
+                ",\"required\":3,\"satisfied\":" + (count >= 3) +
+                ",\"remaining\":" + Math.max(0, 3 - count) + "}");
     }
 }

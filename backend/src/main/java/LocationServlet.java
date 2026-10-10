@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @WebServlet("/location-data")
 public class LocationServlet extends HttpServlet {
@@ -48,34 +49,24 @@ public class LocationServlet extends HttpServlet {
 
             // Fetch states
             json.append("\"states\":[");
-            String stateSql = "SELECT state_id, country_id, state_name FROM states ORDER BY country_id, state_id";
+            boolean hasRegionType = hasColumn(connection, "states", "region_type");
+            String stateSql = "SELECT state_id, country_id, state_name" +
+                    (hasRegionType ? ", region_type" : "") +
+                    " FROM states ORDER BY country_id, state_name";
             try (PreparedStatement stmt = connection.prepareStatement(stateSql);
                  ResultSet rs = stmt.executeQuery()) {
                 boolean first = true;
                 while (rs.next()) {
                     if (!first) json.append(",");
+                    int countryId = rs.getInt("country_id");
+                    String stateName = rs.getString("state_name");
+                    String regionType = hasRegionType ? rs.getString("region_type") : null;
+                    if (regionType == null || regionType.isBlank()) regionType = indiaRegionType(countryId, stateName);
                     json.append("{")
                         .append("\"stateId\":").append(rs.getInt("state_id")).append(",")
-                        .append("\"countryId\":").append(rs.getInt("country_id")).append(",")
-                        .append("\"stateName\":\"").append(escape(rs.getString("state_name"))).append("\"")
-                        .append("}");
-                    first = false;
-                }
-            }
-            json.append("],");
-
-            // District values come only from the maintained database table.
-            json.append("\"districts\":[");
-            String districtSql = "SELECT district_id, state_id, district_name FROM districts ORDER BY state_id, district_name";
-            try (PreparedStatement stmt = connection.prepareStatement(districtSql);
-                 ResultSet rs = stmt.executeQuery()) {
-                boolean first = true;
-                while (rs.next()) {
-                    if (!first) json.append(",");
-                    json.append("{")
-                        .append("\"districtId\":").append(rs.getInt("district_id")).append(",")
-                        .append("\"stateId\":").append(rs.getInt("state_id")).append(",")
-                        .append("\"districtName\":\"").append(escape(rs.getString("district_name"))).append("\"")
+                        .append("\"countryId\":").append(countryId).append(",")
+                        .append("\"stateName\":\"").append(escape(stateName)).append("\",")
+                        .append("\"regionType\":\"").append(escape(regionType)).append("\"")
                         .append("}");
                     first = false;
                 }
@@ -84,7 +75,10 @@ public class LocationServlet extends HttpServlet {
 
             // Fetch emergency contacts
             json.append("\"emergencyContacts\":[");
-            String emergSql = "SELECT contact_id, country_id, service_name, emergency_number FROM emergency_contacts ORDER BY contact_id";
+            boolean hasSmsSupport = hasColumn(connection, "emergency_contacts", "supports_sms") &&
+                    hasColumn(connection, "emergency_contacts", "sms_number");
+            String emergSql = "SELECT contact_id, country_id, service_name, emergency_number" +
+                    (hasSmsSupport ? ", supports_sms, sms_number" : "") + " FROM emergency_contacts ORDER BY contact_id";
             try (PreparedStatement stmt = connection.prepareStatement(emergSql);
                  ResultSet rs = stmt.executeQuery()) {
                 boolean first = true;
@@ -94,7 +88,9 @@ public class LocationServlet extends HttpServlet {
                         .append("\"contactId\":").append(rs.getInt("contact_id")).append(",")
                         .append("\"countryId\":").append(rs.getInt("country_id")).append(",")
                         .append("\"serviceName\":\"").append(escape(rs.getString("service_name"))).append("\",")
-                        .append("\"emergencyNumber\":\"").append(escape(rs.getString("emergency_number"))).append("\"")
+                        .append("\"emergencyNumber\":\"").append(escape(rs.getString("emergency_number"))).append("\",")
+                        .append("\"supportsSms\":").append(hasSmsSupport && rs.getBoolean("supports_sms")).append(",")
+                        .append("\"smsNumber\":").append(hasSmsSupport ? Security.quote(rs.getString("sms_number")) : "null")
                         .append("}");
                     first = false;
                 }
@@ -115,5 +111,18 @@ public class LocationServlet extends HttpServlet {
     private static String escape(String s) {
         if (s == null) return "";
         return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r");
+    }
+
+    private static boolean hasColumn(Connection c, String table, String column) throws SQLException {
+        try (ResultSet rs = c.getMetaData().getColumns(c.getCatalog(), null, table, column)) { return rs.next(); }
+    }
+
+    private static String indiaRegionType(int countryId, String name) {
+        if (countryId != 1) return "Region";
+        return switch (name) {
+            case "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+                 "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry" -> "Union Territory";
+            default -> "State";
+        };
     }
 }

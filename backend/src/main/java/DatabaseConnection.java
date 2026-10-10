@@ -17,6 +17,7 @@ public class DatabaseConnection {
 
         } catch (Exception e) {
             System.err.println("Database connection failed: " + e.getClass().getSimpleName());
+            e.printStackTrace(System.err);
             return null;
         }
     }

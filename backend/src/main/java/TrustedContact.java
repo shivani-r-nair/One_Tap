@@ -15,6 +15,12 @@ public class TrustedContact {
         this.relationship = relationship;
     }
 
+    public TrustedContact(int contactId, int userId, String contactName,
+                          String phoneNumber, String relationship) {
+        this(userId, contactName, phoneNumber, relationship);
+        this.contactId = contactId;
+    }
+
     public int getContactId() {
         return contactId;
     }
